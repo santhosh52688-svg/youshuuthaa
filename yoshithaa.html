@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Yoshithaa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400&family=Homemade+Apple&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ivory:#f6f0e6; --beige:#e9dfd0; --rose:#b98a8a; --mauve:#8c6b75; --brown:#5b4a42; --charcoal:#1d1a1b;
+  --serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --sans:"Jost","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--ivory);color:var(--brown);font-family:var(--serif);font-size:clamp(1.15rem,1rem + .8vw,1.5rem);line-height:1.7;overflow-x:hidden}
+section{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:14vh 1.5rem;position:relative;text-align:center}
+.wrap{width:100%;max-width:34rem}
+h1{font-weight:300;font-size:clamp(3.4rem,17vw,9rem);line-height:1;letter-spacing:.01em;color:var(--brown)}
+h2{font-weight:400;font-size:clamp(2rem,7vw,3.6rem);line-height:1.15;margin-bottom:2.5rem;color:var(--brown)}
+p{margin-bottom:1.6rem}
+.sub{font-style:italic;color:var(--mauve);margin-top:1.6rem}
+.small{font-family:var(--sans);font-weight:300;font-size:.78rem;letter-spacing:.18em;color:var(--mauve)}
+
+/* backgrounds */
+#hero{background:radial-gradient(ellipse at 50% 30%,#fbf7ef 0%,var(--ivory) 55%,var(--beige) 100%)}
+#hero::before{content:"";position:absolute;inset:-20%;background:radial-gradient(circle at 30% 40%,rgba(185,138,138,.18),transparent 45%),radial-gradient(circle at 70% 70%,rgba(140,107,117,.12),transparent 50%);animation:drift 24s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate3d(4%,3%,0) scale(1.08)}}
+#hero>*{position:relative}
+#meaning{background:var(--ivory)}
+#changed{background:linear-gradient(var(--ivory),#e4d9ca)}
+#feelings{background:linear-gradient(#e4d9ca,#cdbcb4)}
+#still{background:linear-gradient(#cdbcb4,#a58a90);color:#2c2226}
+#still h2,#still p{color:#2c2226}
+#hope{background:linear-gradient(#a58a90,#463a3f);color:#f3ebe3}
+#hope h2{color:#f3ebe3}
+#waiting{background:var(--charcoal);color:#efe6dc}
+#waiting p{font-size:clamp(1.5rem,5vw,2.6rem);line-height:1.35;font-weight:300}
+#waiting .big{font-size:clamp(2rem,8vw,4.2rem);font-style:italic;color:#e3c3c0}
+#turn{background:linear-gradient(var(--charcoal),var(--ivory) 45%)}
+#turn .wrap{padding-top:22vh}
+#care{background:var(--ivory)}
+#final{background:var(--beige)}
+
+/* meaning: quiet lines, alternating alignment, no cards */
+.lines p{max-width:26rem;margin:0 0 3.2rem}
+.lines p:nth-child(odd){text-align:left}
+.lines p:nth-child(even){text-align:right;margin-left:auto}
+.photo{width:100%;max-width:26rem;aspect-ratio:4/5;object-fit:cover;margin:0 auto 3rem;display:none}
+.photo.on{display:block}
+
+/* reveal */
+.r{opacity:0;transform:translateY(14px);filter:blur(6px);transition:opacity 2.2s ease,transform 2.2s ease,filter 2.2s ease}
+.r.in{opacity:1;transform:none;filter:none}
+.cue{position:absolute;bottom:6vh;left:0;right:0;text-align:center;animation:pulse 3.5s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+
+
+/* film grain, progress, letters, light */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.09;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>")}
+#bar{position:fixed;top:0;left:0;height:2px;width:0;background:var(--rose);opacity:.75;z-index:60}
+.wrap{position:relative;z-index:1}
+.ch{display:inline-block;opacity:0;filter:blur(10px);transform:translateY(10px);animation:ch 2.6s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes ch{to{opacity:1;filter:none;transform:none}}
+#still p{font-style:italic;font-size:1.2em}
+#hope::after{content:"";position:absolute;left:0;right:0;bottom:0;height:45%;pointer-events:none;background:linear-gradient(transparent,rgba(226,170,130,.28))}
+.lamp{position:absolute;top:50%;left:50%;width:min(95vw,38rem);aspect-ratio:1;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(232,172,112,.30),rgba(232,172,112,.09) 45%,transparent 70%);animation:breathe 8s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(.92);opacity:.7}50%{transform:translate(-50%,-50%) scale(1.1);opacity:1}}
+.whisper{font-family:var(--serif);font-style:italic;font-size:1.05rem!important;color:#bfa79c;max-width:24rem;margin-left:auto;margin-right:auto}
+.sign{font-family:"Homemade Apple",cursive;font-size:1.05rem;color:var(--mauve);margin-top:3rem}
+#f.sent textarea,#f.sent button{opacity:.35;transition:opacity 1.5s}
+#msg{font-size:1.3rem}
+
+/* form */
+label{display:block;font-style:italic;margin-bottom:1rem}
+textarea{width:100%;min-height:11rem;padding:1.1rem;font:inherit;font-size:1.1rem;color:var(--brown);background:rgba(255,255,255,.55);border:1px solid rgba(91,74,66,.3);border-radius:2px;resize:vertical}
+textarea:focus,button:focus-visible{outline:2px solid var(--mauve);outline-offset:3px}
+button{margin-top:1.4rem;min-height:48px;padding:.8rem 2.6rem;font-family:var(--sans);font-weight:400;font-size:.85rem;letter-spacing:.2em;color:var(--ivory);background:var(--brown);border:0;border-radius:2px;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+#msg{min-height:2rem;margin-top:1.4rem;font-style:italic;color:var(--mauve)}
+.foot{margin-top:2.4rem}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .r{opacity:1;transform:none;filter:none;transition:none}
+  .ch{opacity:1!important;filter:none!important;animation:none!important}
+  .lamp{animation:none!important}
+  #hero::before,.cue{animation:none}
+}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+
+<section id="hero">
+  <div>
+    <h1 id="heroName" aria-label="Yoshithaa"></h1>
+    <p class="sub r" id="heroSub"></p>
+  </div>
+  <div class="cue small" id="heroCue"></div>
+</section>
+
+<section id="meaning"><div class="wrap">
+  <h2 class="r" data-c="meaning.title"></h2>
+  <img class="photo r" id="photo-meaning" alt="">
+  <div class="lines" id="meaningLines"></div>
+</div></section>
+
+<section id="changed"><div class="wrap" id="changedWrap"><h2 class="r" data-c="changed.title"></h2></div></section>
+<section id="feelings"><div class="wrap" id="feelingsWrap"><h2 class="r" data-c="feelings.title"></h2></div></section>
+<section id="still"><div class="wrap" id="stillWrap"><h2 class="r" data-c="still.title"></h2></div></section>
+<section id="hope"><div class="wrap" id="hopeWrap"><h2 class="r" data-c="hope.title"></h2></div></section>
+<section id="waiting"><div class="lamp"></div><div class="wrap" id="waitingWrap"></div></section>
+
+<section id="turn"><div class="wrap">
+  <h2 class="r" data-c="turn.title"></h2>
+  <div id="turnWrap"></div>
+  <form id="f" class="r" novalidate>
+    <label for="t" data-c="turn.label"></label>
+    <textarea id="t" name="entry.1452422358" maxlength="5000" rows="6"></textarea><br>
+    <button type="submit" id="send">SEND</button>
+    <div id="msg" role="status" aria-live="polite"></div>
+  </form>
+</div></section>
+
+<section id="care"><div class="wrap" id="careWrap"><h2 class="r" data-c="care.title"></h2></div></section>
+
+<section id="final"><div class="wrap">
+  <h2 class="r" data-c="final.title"></h2>
+  <p class="sub r" data-c="final.line"></p>
+  <p class="sign r" data-c="final.sign"></p>
+</div></section>
+
+<iframe name="hidden_iframe" id="hidden_iframe" title="" tabindex="-1" aria-hidden="true" style="display:none"></iframe>
+
+<script>
+/* =========================================================
+   CONTENT — every word below is placeholder. Replace freely.
+   Each paragraph is one string in an array.
+   Set photo: "images/yours.jpg" to show an image in the first section.
+   ========================================================= */
+const CONTENT = {
+  hero: { name: "YoshuuthaaaA", sub: "Before you read this, I just want you to know—these words come from a heart that still cares deeply about you.", },
+  meaning: {
+    title: "What you mean to me",
+    photo: "", photoAlt: "",
+    lines: [
+
+  "You mean so much to me.",
+  "You became the most important person to me.",
+
+  "I don't know how to feel happy without you anymore. You are there in almost every thought I have.",
+
+  "The way you talk, the way you smile, the way you love, the way you care, and the way you understand me — all these things mean so much to me.",
+
+  "How can I just stop thinking about all these things?",
+
+  "Now I understand that I feel truly happy when Yoshitha is with me.",
+  
+  "My happiness is you.",
+
+  "I have never thought about anyone the way I think about you. You are the first person who became this important to me.",
+
+  "I never thought that you would leave me. I never even had a thought like this before.",
+
+  "Now I understand how much you really mean to me.",
+
+  "YouuushuuuthaaaA"
+
+]
+  },
+  changed: {
+    title: "Somewhere, things changed.",
+    paras: [
+      
+  "I don't know what happened properly, or when everything started to change. I don't even know why.",
+
+  "Maybe it was completely my mistake.",
+
+  "I had so much belief in you and in your love, so I never felt that the mistake was from your side.",
+
+  "Maybe it was from my side. I just couldn't take this distance between us.",
+
+  "In the past, we used to talk for hours and never even noticed how fast the time was passing. But now we don't talk like that. There is no proper conversation between us.",
+
+  "We were both so happy together. We enjoyed our love, our time together, our presence, our fights, and even the small things between us.",
+
+  "But now, instead of fighting together, it feels like we are both fighting with our own thoughts and our own things separately.",
+
+  "I never thought that the love between us was fake, just an attraction, or something temporary.",
+
+  "I have so many questions in my mind, but I don't have answers to any of them.",
+
+  "I still remember our first conversation, our first call, and our first video call. Those moments were so special to me. They gave us so much happiness and joy.",
+
+  "We used to spend so much time together. But now, there is no time. Even our calls, video calls, and texts that once made us happy have become moments of sadness and tears.",
+
+  "Even after everything, I don't have even one percent of doubt about you, your love, or anything you gave me.",
+
+  "I still completely trust you."
+  
+]
+  },
+  feelings: {
+    title: "What I haven't been able to say",
+    paras: [
+     "This has affected me more than I ever expected.",
+
+  "I know this is very tough for both of us.",
+
+  "I can't forget you. It's hard for me to act like nothing happened.",
+
+  "I can't remove you from my mind, my thoughts, or my imagination.",
+
+  "I realized how much I became connected to you, how much I love you, and how important you have become in my life.",
+
+  "Once you said, \"You don't know my value until I leave.\" Now I understand what you meant. I came to know your value in my life.",
+
+  "It's very, very difficult and tough without you.",
+
+  "I realized that you are my happiness.",
+
+  "I realized that you are my love.",
+
+  "I realized that you are also the reason behind my sadness.",
+
+  "I realized that you are a part of my heart.",
+
+  "I realized so many things that I never understood before.",
+
+  "I realized that being without you is not easy. It's very tough and difficult for me.",
+
+  "Now I understand how much you really mean to me."
+
+]
+  },
+  still: {
+    title: "What hasn't changed",
+    paras: [
+       "My feelings did not disappear just because things became difficult.",
+
+  "I still care about you.",
+
+  "I still remember the good things, and I still value everything we had.",
+
+  "I still have the same feelings for you.",
+
+  "I never removed you from my thoughts or from my heart.",
+
+  "I never forgot you.",
+
+  "Till my last breath, you will still remain the same in my heart.",
+
+  "My love for you, my care for you, and everything I feel for you will never change.",
+
+  "I still trust you completely.",
+
+  "You are still the most important person in my entire life.",
+
+  "You are still the most special person in my entire life.",
+
+  "In my heart, in my life, and in the way I see you, you will never change.",
+
+  "I still wish the best for you.",
+
+  "I still wish all the happiness in the world for you.",
+
+  "I am still ready to give you my happiness if it makes you happy.",
+
+  "I still want to do anything I can for you.",
+
+  "More than anything, I want you to be happy, even if that happiness is without me."
+
+]
+  },
+  hope: {
+    title: "Maybe…",
+    paras: [
+       "Maybe things can go back to how they were.",
+  
+  "Maybe they cannot.",
+  
+  "I don't know what tomorrow will look like.",
+
+  "I don't know if you will behave normally with me again.",
+
+  "I don't know if we will spend happy moments together again.",
+
+  "I don't know if we will both be happy together again.",
+
+  "But somewhere inside me, I still have a small hope that you will come back to me, and that we will both feel happy together again.",
+
+  "Maybe things will slowly sort themselves out.",
+
+  "Maybe everything will become clear.",
+
+  "Maybe these sad days and tears will one day become happy tears.",
+
+  "These are just my small hopes.",
+
+  "I don't know if any of this will happen or not.",
+
+  "But I still have that little hope in my heart."
+  
+]
+  },
+  waiting: {
+    paras: [
+      
+  "I don't know how long this will go.",
+
+  "But right now…",
+
+  { big: "I am still waiting for you." },
+
+  "I still want to try. I still want to put effort from my side as long as there is even a small chance.",
+
+  "I want to try to clear everything between us as long as it is possible.",
+
+  "I want to talk to you as long as there is still a chance to talk and understand each other.",
+
+  "I don't know where these efforts will take us. Maybe they will bring you back to me, or maybe they will take you even farther from me.",
+
+  "But ",
+  { big: " I still want to try."},
+
+  "I want to try every way I can to understand what happened and figure this out." ,
+
+  "I don't know what the result will be. I just know that I don't want to give up without trying."
+
+]
+  },
+  turn: {
+    title: "Now I want to hear you.",
+    paras: [
+      "I've told you what has been in my heart.",
+      "You don't have to find perfect words.",
+      "If there is anything you want to tell me, tell me honestly."
+    ],
+    label: "What do you want to tell me yoshitha?",
+    empty: "Write something first, whatever feels true.",
+    ok: "Thank you for telling me.",
+    fail: "That didn't send. Please check your connection and try again."
+  },
+  care: {
+    title: "Take care of yourself.",
+
+paras: [
+
+  "Don't forget to smile.",
+
+  "Don't forget to be happy.",
+
+  "Drink enough water every day.",
+
+  "Sleep well and take enough rest.",
+
+  "Eat your food on time.",
+
+  "Keep smiling always. I want you to be the happiest person in the world.",
+
+  "Whatever happens, I genuinely want you to be happy."
+
+]
+  },
+  final: { title: " Yoshithaa.", line: "Thank you for reading everything ", sign: "[Santhosh]" }
+};
+
+/* Google Form (frontend-only submission) */
+const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe6OEo2Tu0F-RvVJFuweBg5kZA4eNogVhR2id7LHXNDI0mnDQ/formResponse";
+
+/* ---------- render ---------- */
+const $ = s => document.querySelector(s);
+const get = p => p.split('.').reduce((o,k)=>o[k],CONTENT);
+document.querySelectorAll('[data-c]').forEach(el => el.textContent = get(el.dataset.c));
+$('#heroName').innerHTML = [...CONTENT.hero.name].map((c,i)=>'<span class="ch" aria-hidden="true" style="animation-delay:'+(0.4+i*0.28)+'s">'+c+'</span>').join('');
+$('#heroSub').textContent = CONTENT.hero.sub;
+$('#heroCue').textContent = CONTENT.hero.cue;
+
+function addParas(id, arr){
+  const w = $(id);
+  arr.forEach(t => {
+    const p = document.createElement('p');
+    p.className = 'r';
+    if (typeof t === 'object'){ if(t.big){p.textContent = t.big; p.classList.add('big');} else {p.textContent=t.whisper; p.classList.add('whisper');} }
+    else p.textContent = t;
+    w.appendChild(p);
+  });
+}
+addParas('#changedWrap', CONTENT.changed.paras);
+addParas('#feelingsWrap', CONTENT.feelings.paras);
+addParas('#stillWrap', CONTENT.still.paras);
+addParas('#hopeWrap', CONTENT.hope.paras);
+addParas('#waitingWrap', CONTENT.waiting.paras);
+addParas('#turnWrap', CONTENT.turn.paras);
+addParas('#careWrap', CONTENT.care.paras);
+CONTENT.meaning.lines.forEach(t => {
+  const p = document.createElement('p'); p.className='r'; p.textContent=t; $('#meaningLines').appendChild(p);
+});
+if (CONTENT.meaning.photo){
+  const im = $('#photo-meaning'); im.src = CONTENT.meaning.photo; im.alt = CONTENT.meaning.photoAlt; im.classList.add('on');
+}
+
+/* ---------- reveal on scroll ---------- */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), { threshold: .35 });
+document.querySelectorAll('.r').forEach(el => io.observe(el));
+// gentle load-in for the first screen
+setTimeout(()=>{ $('#heroSub').classList.add('in'); $('#heroCue').style.opacity=1; }, 3600);
+const bar=$('#bar');
+addEventListener('scroll',()=>{const h=document.documentElement;bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'},{passive:true});
+
+/* ---------- response form ---------- */
+const f = $('#f'), t = $('#t'), msg = $('#msg'), btn = $('#send');
+let submitting = false;
+const iframe = $('#hidden_iframe');
+f.method = 'POST'; f.action = FORM_URL; f.target = 'hidden_iframe';
+
+iframe.addEventListener('load', () => {
+  if (!submitting) return;           // ignore initial blank load
+  submitting = false;
+  t.value = '';
+  msg.textContent = CONTENT.turn.ok; f.classList.add('sent');
+  btn.disabled = false;
+  t.disabled = false;
+});
+
+f.addEventListener('submit', e => {
+  if (!t.value.trim()){
+    e.preventDefault();
+    msg.textContent = CONTENT.turn.empty;
+    t.focus();
+    return;
+  }
+  submitting = true;
+  msg.textContent = '';
+  btn.disabled = true;
+  // let the native POST go to the hidden iframe, then lock the field after it has been read
+  setTimeout(()=>{ t.readOnly = true; }, 0);
+  setTimeout(()=>{ t.readOnly = false; if (submitting){ submitting = false; btn.disabled = false; msg.textContent = CONTENT.turn.ok; f.classList.add('sent'); t.value=''; } }, 4000);
+});
+</script>
+</body>
+</html>
